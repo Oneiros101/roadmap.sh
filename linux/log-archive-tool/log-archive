@@ -43,12 +43,14 @@ archive() {
 	local target_path=$1
 	local target_directory=$2
 
+	# If empty target path
 	if [[ -z "$target_path" ]]; then
 		if tar -czf "$ARCHIVE_NAME" "$target_directory"; then
 			echo "Archived $ARCHIVE_NAME in this current directory"
 		fi
 	fi
 
+	# If target path is not empty and is writable
 	if [[ -n "$target_path" ]] && [[ -w "$target_path" ]]; then
 		if tar -czf "${target_path}/$ARCHIVE_NAME" "$target_directory"; then
 			echo "Archived $ARCHIVE_NAME in path '$target_path'"
@@ -86,19 +88,21 @@ do
 
 		*)
 			error_exit "Unknown option: $1"
-			echo
 			;;
 	esac
 	shift
 done
 
+# If target directory is not provided
 if [[ $# -ne 1 ]]; then
 	error_exit "Missing target directory"
 fi
 TARGET_DIRECTORY=$1
 
+# If target directory does not exist
 if [[ ! -d "$TARGET_DIRECTORY" ]]; then
 	error_exit "'$TARGET_DIRECTORY' does not exist."
 fi
 
+# Archive target directory to target path
 archive "$TARGET_PATH" "$TARGET_DIRECTORY"
